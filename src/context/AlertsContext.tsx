@@ -15,16 +15,22 @@ export const AlertsProvider = ({ children }) => {
   const fetchAlerts = async () => {
     try {
       const data = await getAlerts(1); // Cambia el ID del inventario según tu lógica
-      setAlerts(data.productos_stock);
+      setAlerts((prevAlerts) => {
+        // Solo actualiza si hay cambios en las alertas
+        if (JSON.stringify(prevAlerts) !== JSON.stringify(data.productos_stock)) {
+          return data.productos_stock;
+        }
+        return prevAlerts;
+      });
     } catch (error) {
-      console.error(error);
+      console.error('Error al obtener alertas:', error);
     }
   };
 
   useEffect(() => {
-    fetchAlerts();
-    const interval = setInterval(fetchAlerts, 60000); // Actualiza cada minuto
-    return () => clearInterval(interval);
+    fetchAlerts(); // Cargar alertas al inicio
+    const interval = setInterval(fetchAlerts, 60000); // Consultar cada 60 segundos
+    return () => clearInterval(interval); // Limpiar el intervalo al desmontar
   }, []);
 
   return (

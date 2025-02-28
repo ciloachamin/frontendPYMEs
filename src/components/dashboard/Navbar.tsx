@@ -36,8 +36,6 @@ const Navbar = ({ setVisible, visible }) => {
     },
   ];
 
-  console.log('alerts 2', alerts);
-  
   const alertsMenuItems = alerts.map((product) => ({
     label: `${product.nombre} - Stock: ${product.stock_actual} (Mínimo: ${product.stock_minimo})`,
     icon: 'pi pi-exclamation-triangle',
