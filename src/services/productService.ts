@@ -17,7 +17,6 @@ interface Product {
   id_proveedor: number;
 }
 
-import api from './api';
 
 interface ProductFilters {
   categoriaId?: number;
@@ -37,6 +36,15 @@ export const getProducts = async (filters: ProductFilters) => {
   }
 };
 
+export const getProductsNotFilter = async () => {
+    try {
+      const response = await api.get('/productos');
+      return response.data;
+    } catch (error) {
+      throw new Error('Error al obtener los productos');
+    }
+  };
+  
 
 
 // Obtener un producto por ID

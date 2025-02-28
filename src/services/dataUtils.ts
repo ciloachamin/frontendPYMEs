@@ -1,5 +1,5 @@
 import { getOrders } from './orderService'; // Asegúrate de que la ruta sea correcta
-
+import { getProductsNotFilter } from './productService';
 interface PreparedOrderData {
   labels: string[];
   data: number[];
@@ -40,3 +40,31 @@ export async function prepareOrderData(): Promise<PreparedOrderData> {
     return { labels: [], data: [] };
   }
 }
+
+
+
+// Función para preparar datos de productos por categoría
+export async function prepareProductsByCategoryData() {
+    try {
+      const products = await getProductsNotFilter();
+      const productsByCategory: { [key: string]: number } = products.reduce(
+        (acc: { [key: string]: number }, product: any) => {
+          const categoryName = product.categoria.nombre; // Ajusta según la estructura de tu respuesta
+          if (!acc[categoryName]) {
+            acc[categoryName] = 0;
+          }
+          acc[categoryName]++;
+          return acc;
+        },
+        {}
+      );
+  
+      const labels = Object.keys(productsByCategory);
+      const data = labels.map((category) => productsByCategory[category]);
+  
+      return { labels, data };
+    } catch (error) {
+      console.error('Error al preparar los datos de productos por categoría:', error);
+      return { labels: [], data: [] };
+    }
+  }

@@ -56,7 +56,6 @@ function OrdersChart() {
 
   return (
     <div className="card">
-      <h5>Órdenes a lo Largo del Tiempo</h5>
       <Chart type="line" data={basicData} options={basicOptions} />
     </div>
   );
