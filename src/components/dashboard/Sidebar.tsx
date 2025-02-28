@@ -55,6 +55,14 @@ const SidebarMenu = ({ visible, setVisible }) => {
                 setVisible(false);
             }
         },
+        {
+            label: 'Proveedores',
+            icon: 'pi pi-fw pi-users',
+            command: () => {
+                navigate('/suppliers');
+                setVisible(false);
+            }
+        },
         // {
         //     label: 'Productos',
         //     icon: 'pi pi-fw pi-shopping-cart',

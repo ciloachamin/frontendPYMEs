@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import LoginForm from './components/auth/LoginForm';
 import Dashboard from './components/dashboard/Dashboard';
@@ -13,6 +13,10 @@ import InventoryPage from './pages/InventoryPage';
 import InventoryUpdate from './components/inventory/InventoryUpdate';
 import { AlertsProvider } from './context/AlertsContext';
 import MovementsPage from './pages/MovementsPage';
+import OrdersPage from './pages/OrdersPage';
+import OrderForm from './components/orders/OrderForm';
+import SuppliersPage from './pages/SuppliersPage';
+import SupplierForm from './components/orders/SupplierForm';
 
 const queryClient = new QueryClient();
 
@@ -23,7 +27,9 @@ const App = () => {
         <Router>
           <Routes>
             {/* Ruta pública */}
+            {/* Ruta pública para login y ruta raíz */}
             <Route path="/login" element={<LoginForm />} />
+            <Route path="/" element={<Navigate replace to="/login" />} />
 
             {/* Rutas protegidas */}
             <Route element={<PrivateRoute />}>
@@ -45,6 +51,14 @@ const App = () => {
                 <Route path="/inventory/:inventoryId/actualizar/:productId" element={<InventoryUpdate />} />
                 {/* Rutas de movimientos */}
                 <Route path="/movement-inventory" element={<MovementsPage />} />
+                {/* Rutas de ordenes */}
+                <Route path="/orders" element={<OrdersPage />} />
+                <Route path="/orders/create" element={<OrderForm />} />
+                <Route path="/orders/edit/:id" element={<OrderForm />} />
+                {/* Rutas de Proveedores */}
+                <Route path="/suppliers" element={<SuppliersPage />} />
+                <Route path="/suppliers/create" element={<SupplierForm />} />
+                <Route path="/suppliers/edit/:id" element={<SupplierForm />} />
 
               </Route>
             </Route>
