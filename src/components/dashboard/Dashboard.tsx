@@ -8,22 +8,29 @@ import { Divider } from 'primereact/divider';
 import { Skeleton } from 'primereact/skeleton';
 import { Badge } from 'primereact/badge';
 import { Chart } from 'primereact/chart';
+import InventoryLevels from '../reports/InventoryLevels';
 
 const Dashboard = () => {
   const [totalOrders, setTotalOrders] = useState(null);
   const [totalProducts, setTotalProducts] = useState(null);
   const [totalMovements, setTotalMovements] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [inventoryData, setInventoryData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const orders = await getOrders();
         setTotalOrders(orders.length);
-        
+
         const products = await getProductsNotFilter();
         setTotalProducts(products.total);
-        
+
+        const inventory = await getProductsNotFilter();
+        console.log(inventory);
+
+        setInventoryData(inventory);
+
         const movements = await getMovements();
         setTotalMovements(movements.length);
       } catch (error) {
@@ -32,7 +39,7 @@ const Dashboard = () => {
         setLoading(false);
       }
     };
-    
+
     fetchData();
   }, []);
 
@@ -79,32 +86,32 @@ const Dashboard = () => {
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-2xl font-semibold text-gray-800">Dashboard</h1>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <StatCard 
-            title="Total de Pedidos" 
-            value={totalOrders} 
-            icon={cardIcons.orders} 
-            color="indigo" 
+          <StatCard
+            title="Total de Pedidos"
+            value={totalOrders}
+            icon={cardIcons.orders}
+            color="indigo"
           />
-          
-          <StatCard 
-            title="Total de Productos" 
-            value={totalProducts} 
-            icon={cardIcons.products} 
-            color="emerald" 
+
+          <StatCard
+            title="Total de Productos"
+            value={totalProducts}
+            icon={cardIcons.products}
+            color="emerald"
           />
-          
-          <StatCard 
-            title="Total de Movimientos" 
-            value={totalMovements} 
-            icon={cardIcons.movements} 
-            color="amber" 
+
+          <StatCard
+            title="Total de Movimientos"
+            value={totalMovements}
+            icon={cardIcons.movements}
+            color="amber"
           />
         </div>
-        
+
         <Divider />
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
           <Card className="shadow-md border-0 p-0">
             <div className="p-4">
@@ -116,7 +123,7 @@ const Dashboard = () => {
               )}
             </div>
           </Card>
-          
+
           <Card className="shadow-md border-0 p-0">
             <div className="p-4">
               <h2 className="text-xl font-medium text-gray-700 mb-4">Resumen de Actividad</h2>
@@ -125,10 +132,12 @@ const Dashboard = () => {
               ) : (
                 <div className="h-80 flex items-center justify-center text-gray-400">
                   Panel de actividades recientes
+
                 </div>
               )}
             </div>
           </Card>
+          {inventoryData && <InventoryLevels data={inventoryData.data} />}
         </div>
       </div>
     </div>
