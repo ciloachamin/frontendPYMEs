@@ -19,6 +19,9 @@ const Alerts = () => {
     fetchAlerts();
   }, [inventoryId]);
 
+  console.log('alerts', alerts);
+  
+
   return (
     <div>
       <h2>Alertas de Stock Bajo</h2>

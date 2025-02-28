@@ -11,12 +11,14 @@ import ProductsPage from './pages/ProductsPage';
 import ProductForm from './components/products/ProductForm';
 import InventoryPage from './pages/InventoryPage';
 import InventoryUpdate from './components/inventory/InventoryUpdate';
+import { AlertsProvider } from './context/AlertsContext';
 
 const queryClient = new QueryClient();
 
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
+       <AlertsProvider>
       <Router>
         <Routes>
           {/* Ruta pública */}
@@ -46,6 +48,7 @@ const App = () => {
           </Route>
         </Routes>
       </Router>
+      </AlertsProvider>
     </QueryClientProvider>
   );
 };
