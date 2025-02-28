@@ -137,9 +137,11 @@ const Dashboard = () => {
               )}
             </div>
           </Card>
-          {inventoryData && <InventoryLevels data={inventoryData.data} />}
+
         </div>
+        {inventoryData && <InventoryLevels data={inventoryData.data} />}
       </div>
+      
     </div>
   );
 };

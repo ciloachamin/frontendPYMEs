@@ -162,45 +162,49 @@ const InventoryLevels: React.FC<InventoryLevelsProps> = ({ data }) => {
     };
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+    {/* Tabla */}
+    <div className="mb-6 shadow-sm rounded-lg bg-white p-4">
+        <h3 className="text-lg font-semibold mb-4">Tabla de Inventario</h3>
+        <DataTable
+            value={data}
+            responsiveLayout="scroll"
+            rowHover
+            paginator
+            rows={10}
+            rowsPerPageOptions={[5, 10, 25]}
+            className="shadow-sm rounded-lg"
+        >
+            {columns.map(col => (
+                <Column
+                    key={col.field}
+                    field={col.field}
+                    header={col.header}
+                    sortable
+                />
+            ))}
+            {/* Columna para el estado */}
+            <Column
+                header="Estado"
+                body={stockStatusTemplate}
+                style={{ width: '8rem' }}
+            />
+            {/* Columna para la barra de progreso */}
+            <Column
+                header="Nivel de Stock"
+                body={stockProgressTemplate}
+                style={{ width: '15rem' }}
+            />
+        </DataTable>
+    </div>
 
-            <div className="mb-6">
-                <DataTable 
-                    value={data} 
-                    responsiveLayout="scroll"
-                    rowHover
-                    paginator 
-                    rows={10}
-                    rowsPerPageOptions={[5, 10, 25]}
-                    className="shadow-sm rounded-lg"
-                >
-                    {columns.map(col => (
-                        <Column
-                            key={col.field}
-                            field={col.field}
-                            header={col.header}
-                            sortable
-                        />
-                    ))}
-                    {/* Columna para el estado */}
-                    <Column
-                        header="Estado"
-                        body={stockStatusTemplate}
-                        style={{ width: '8rem' }}
-                    />
-                    {/* Columna para la barra de progreso */}
-                    <Column
-                        header="Nivel de Stock"
-                        body={stockProgressTemplate}
-                        style={{ width: '15rem' }}
-                    />
-                </DataTable>
-            </div>
-            <div className="shadow-sm p-4 rounded-lg bg-white w-1/2">
-                <h3 className="text-lg font-semibold mb-4">Gráfica de Niveles de Inventario</h3>
-                <Chart type="bar" data={chartData} options={chartOptions} />
-            </div>
-        </div>
+    {/* Gráfica */}
+    <div className="shadow-sm p-4 rounded-lg bg-white">
+        <h3 className="text-lg font-semibold mb-4">Gráfica de Niveles de Inventario</h3>
+        <Chart type="bar" data={chartData} options={chartOptions} />
+    </div>
+</div>
+
     );
 };
 
