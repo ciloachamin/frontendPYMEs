@@ -1,62 +1,62 @@
 import api from './api';
+import { Company } from './companyService';
 
-interface Order {
-  id_empresa: number;
-  fecha_entrega: string;
-  estado: string;
-  detalles: {
-    id_producto: number;
-    cantidad: number;
-    precio_unitario: number;
-  }[];
+export interface OrderDetail {
+  id_producto?: number | null;
+  cantidad?: number | null;
+  precio_unitario?: number | null;
 }
 
-// Obtener todos los pedidos
+export interface Order {
+  id_pedido?: number
+  empresa: Company;
+  fecha_solicitud: string;
+  fecha_entrega: string;
+  estado: string;
+  detalles: OrderDetail[];
+  id_empresa: number | null;
+}
 export const getOrders = async () => {
   try {
     const response = await api.get('/pedidos');
     return response.data;
   } catch (error) {
-    throw new Error('Error al obtener los pedidos');
+    throw new Error(`Error al obtener los pedidos ${error}`);
   }
 };
 
-// Obtener un pedido por ID
 export const getOrderById = async (id: number) => {
   try {
     const response = await api.get(`/pedidos/${id}`);
     return response.data;
   } catch (error) {
-    throw new Error('Error al obtener el pedido');
+    throw new Error(`Error al obtener el pedido ${error}`);
   }
 };
 
-// Crear un nuevo pedido
 export const createOrder = async (order: Order) => {
   try {
     const response = await api.post('/pedidos', order);
     return response.data;
   } catch (error) {
-    throw new Error('Error al crear el pedido');
+    throw new Error(`Error al crear el pedido ${error}`);
   }
 };
 
-// Actualizar un pedido existente
 export const updateOrder = async (id: number, order: Partial<Order>) => {
   try {
     const response = await api.put(`/pedidos/${id}`, order);
     return response.data;
   } catch (error) {
-    throw new Error('Error al actualizar el pedido');
+    throw new Error(`Error al actualizar el pedido ${error}`);
   }
 };
 
-// Eliminar un pedido
 export const deleteOrder = async (id: number) => {
   try {
     const response = await api.delete(`/pedidos/${id}`);
     return response.data;
   } catch (error) {
-    throw new Error('Error al eliminar el pedido');
+    throw new Error(`Error al eliminar el pedido ${error}`);
   }
 };

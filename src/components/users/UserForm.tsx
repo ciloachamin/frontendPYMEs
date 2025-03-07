@@ -4,15 +4,13 @@ import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createUser, getUserById, updateUser } from '../../services/userService';
-import { getCompanies } from '../../services/companyService';
+import { Company, getCompanies } from '../../services/companyService';
 import { Card } from 'primereact/card';
 import { Password } from 'primereact/password';
 import { Divider } from 'primereact/divider';
 const UserForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-
-  // Estado del usuario
   const [user, setUser] = useState({
     nombre_completo: '',
     email: '',
@@ -21,8 +19,7 @@ const UserForm = () => {
     id_empresa: '',
   });
 
-  // Solo se necesitan las empresas para el modo creación
-  const [companies, setCompanies] = useState([]);
+  const [companies, setCompanies] = useState<Company[]>([]);
 
   useEffect(() => {
     if (id) {
@@ -35,13 +32,12 @@ const UserForm = () => {
   const fetchUser = async () => {
     try {
       const data = await getUserById(Number(id));
-      // Para actualizar solo se enviarán nombre_completo, teléfono y password
       setUser({
         nombre_completo: data.nombre_completo,
-        email: data.email, // Se muestra, pero no se envía en update
+        email: data.email,
         telefono: data.telefono,
         password: '',
-        id_empresa: data.id_empresa, // Se muestra, pero no se envía en update
+        id_empresa: data.id_empresa, 
       });
     } catch (error) {
       console.error(error);
@@ -61,7 +57,6 @@ const UserForm = () => {
     e.preventDefault();
     try {
       if (id) {
-        // En actualización se envían solo estos campos
         const updatePayload = {
           nombre_completo: user.nombre_completo,
           telefono: user.telefono,
@@ -69,15 +64,14 @@ const UserForm = () => {
         };
         await updateUser(Number(id), updatePayload);
       } else {
-        // En creación se envían estos campos
-        console.log("sss", user);
 
         const createPayload = {
           nombre_completo: user.nombre_completo,
           email: user.email,
           telefono: user.telefono,
           password: user.password,
-          id_empresa: user.id_empresa,
+          id_empresa: Number(user.id_empresa),
+          roles:[]
         };
         console.log(createPayload);
 

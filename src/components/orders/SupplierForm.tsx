@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { InputText } from 'primereact/inputText';
 import { Button } from 'primereact/button';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -32,7 +32,7 @@ const SupplierForm = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     try {
       if (id) {

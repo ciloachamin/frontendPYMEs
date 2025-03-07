@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { getOrders } from '../../services/orderService';
 import { getProductsNotFilter } from '../../services/productService';
 import { getMovements } from '../../services/movementService';
@@ -6,16 +6,17 @@ import OrdersChart from '../reports/OrdersChart';
 import { Card } from 'primereact/card';
 import { Divider } from 'primereact/divider';
 import { Skeleton } from 'primereact/skeleton';
-import { Badge } from 'primereact/badge';
-import { Chart } from 'primereact/chart';
 import InventoryLevels from '../reports/InventoryLevels';
 
+interface ResponserA{
+  data:any;
+}
 const Dashboard = () => {
   const [totalOrders, setTotalOrders] = useState(null);
   const [totalProducts, setTotalProducts] = useState(null);
   const [totalMovements, setTotalMovements] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [inventoryData, setInventoryData] = useState(null);
+  const [inventoryData, setInventoryData] = useState<ResponserA>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,7 +44,6 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-  // Iconos personalizados para cada tarjeta
   const cardIcons = {
     orders: (
       <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -62,7 +62,14 @@ const Dashboard = () => {
     )
   };
 
-  const StatCard = ({ title, value, icon, color }) => (
+  interface SidebarMenuProps {
+    title: string | null;
+    value: string | null;
+    icon: any;
+    color: string | null; 
+  }
+
+  const StatCard = ({ title, value, icon, color }: SidebarMenuProps) => (
     <Card className="border-0 shadow-md rounded-lg transition-all duration-300 hover:shadow-lg">
       <div className="flex items-center">
         <div className={`rounded-full p-3 mr-4 bg-${color}-50`}>

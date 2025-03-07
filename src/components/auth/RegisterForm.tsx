@@ -3,7 +3,7 @@ import { InputText } from 'primereact/inputText';
 import { Button } from 'primereact/button';
 import { Password } from 'primereact/password';
 import { registerUser } from '../../services/authService';
-import { getCompanies } from '../../services/companyService';
+import { Company, getCompanies } from '../../services/companyService';
 import { Dropdown } from 'primereact/dropdown';
 
 const RegisterForm = ({ onSuccess }: { onSuccess: () => void }) => {
@@ -13,7 +13,7 @@ const RegisterForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const [password, setPassword] = useState('');
   const [idEmpresa, setIdEmpresa] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [companies, setCompanies] = useState([]);
+  const [companies, setCompanies] = useState<Company[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,51 +1,73 @@
 import api from './api';
+import { Company } from './companyService';
 
-// Obtener el inventario de una empresa
-export const getInventory = async (inventoryId: number) => {
+export interface ProductStock {
+  id_producto: number;
+  nombre: string;
+  stock_minimo: number;
+  stock_maximo: number;
+  cantidad: number;
+  codigo_barras: string;
+  descripcion: string;
+  precio_compra: string;
+  precio_venta: string;
+  stock_actual: string;
+  fecha_creacion: string;
+  ultima_actualizacion: string;
+}
+
+export interface Inventory {
+  id_inventario: number;
+  empresa: Company;
+  productos_stock: ProductStock[];
+}
+export const getInventory = async (inventoryId: number): Promise<Inventory> => {
   try {
     const response = await api.get(`/inventarios/${inventoryId}`);
     return response.data;
   } catch (error) {
-    throw new Error('Error al obtener el inventario');
+    throw new Error(`Error al obtener el inventario ${error}`);
   }
 };
 
-// Agregar o retirar stock de un producto
-export const updateStock = async (inventoryId: number, productId: number, cantidad: number) => {
+export const updateStock = async (
+  inventoryId: number,
+  productId: number,
+  cantidad: number
+): Promise<void> => {
   try {
-    const response = await api.post(`/inventarios/${inventoryId}/producto/${productId}`, { cantidad });
-    return response.data;
+    await api.post(`/inventarios/${inventoryId}/producto/${productId}`, { cantidad });
   } catch (error) {
-    throw new Error('Error al actualizar el stock');
+    throw new Error(`Error al actualizar el stock ${error}`);
   }
 };
 
-// Obtener alertas de stock bajo
-export const getAlerts = async (inventoryId: number) => {
+export const getAlerts = async (inventoryId: number): Promise<Inventory[]> => {
   try {
     const response = await api.get(`/inventarios/${inventoryId}/alertas`);
     return response.data;
   } catch (error) {
-    throw new Error('Error al obtener las alertas');
+    throw new Error(`Error al obtener las alertas ${error}`);
   }
 };
 
-// Crear un nuevo inventario
-export const createInventory = async (idEmpresa: number) => {
+export const createInventory = async (idEmpresa: number): Promise<Inventory> => {
   try {
     const response = await api.post('/inventarios', { id_empresa: idEmpresa });
     return response.data;
   } catch (error) {
-    throw new Error('Error al crear el inventario');
+    throw new Error(`Error al crear el inventario ${error}`);
   }
 };
 
-// Actualizar un inventario existente
-export const updateInventory = async (inventoryId: number, idEmpresa: number) => {
+export const updateInventory = async (
+  inventoryId: number,
+  idEmpresa: number
+): Promise<Inventory> => {
   try {
     const response = await api.put(`/inventarios/${inventoryId}`, { id_empresa: idEmpresa });
     return response.data;
   } catch (error) {
-    throw new Error('Error al actualizar el inventario');
+    throw new Error(`Error al actualizar el inventario ${error}`);
   }
 };

@@ -1,7 +1,5 @@
-// src/components/products/CategorySelector.tsx
-
-import React, { useEffect, useState } from 'react';
-import { getCategories } from '../../services/categoryService'; // Importar desde services
+import  { useEffect, useState } from 'react';
+import { getCategories } from '../../services/categoryService';
 
 interface CategorySelectorProps {
   value: number | string;

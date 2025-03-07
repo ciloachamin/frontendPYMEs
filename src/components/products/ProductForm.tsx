@@ -4,37 +4,34 @@ import { InputNumber } from 'primereact/inputnumber';
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
 import { useNavigate, useParams } from 'react-router-dom';
-import { createProduct, getProductById, updateProduct } from '../../services/productService';
-import { getCategories } from '../../services/categoryService';
-import { getCompanies } from '../../services/companyService';
-import { getSuppliers } from '../../services/supplierService';
+import { createProduct, getProductById, Product, updateProduct } from '../../services/productService';
+import { Category, getCategories } from '../../services/categoryService';
+import { Company, getCompanies } from '../../services/companyService';
+import { getSuppliers, Supplier } from '../../services/supplierService';
 import { Card } from 'primereact/card';
 import { Divider } from 'primereact/divider';
 
 const ProductForm = () => {
-  const { id } = useParams(); // Obtener el ID del producto si está en modo edición
+  const { id } = useParams();
   const navigate = useNavigate();
-
-  // Estado del producto
-  const [product, setProduct] = useState({
+  const [product, setProduct] = useState<Product>({
     codigo_barras: '',
     nombre: '',
     descripcion: '',
-    id_categoria: '',
+    id_categoria: 1,
     precio_compra: null,
     precio_venta: null,
     stock_minimo: null,
     stock_maximo: null,
-    id_empresa: '',
-    id_proveedor: '',
+    stock_actual: 1, 
+    id_empresa: 1,
+    id_proveedor: 1,
   });
 
-  // Datos para los dropdowns
-  const [categories, setCategories] = useState([]);
-  const [companies, setCompanies] = useState([]);
-  const [suppliers, setSuppliers] = useState([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
 
-  // Cargar datos iniciales
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -47,9 +44,8 @@ const ProductForm = () => {
         setCompanies(companiesData);
         setSuppliers(suppliersData);
 
-        // Si estamos en modo edición, cargar los datos del producto
         if (id) {
-          const productData = await getProductById(id);
+          const productData = await getProductById(Number(id));
           setProduct({
             ...productData,
             id_categoria: productData.categoria.id_categoria,
@@ -65,19 +61,16 @@ const ProductForm = () => {
     fetchData();
   }, [id]);
 
-  // Manejar el envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       if (id) {
-        // Modo edición: Actualizar solo los campos permitidos
         const { nombre, precio_venta, stock_minimo } = product;
-        await updateProduct(id, { nombre, precio_venta, stock_minimo });
+        await updateProduct(Number(id), { nombre, precio_venta, stock_minimo });
       } else {
-        // Modo creación: Crear un nuevo producto
         await createProduct(product);
       }
-      navigate('/products'); // Redirigir a la lista de productos
+      navigate('/products');
     } catch (error) {
       console.error('Error al guardar el producto:', error);
     }
@@ -95,7 +88,6 @@ const ProductForm = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-6">
-            {/* Código de Barras */}
             <div>
               <label htmlFor="codigo_barras" className="block text-sm font-medium text-gray-700 mb-1">
                 Código de Barras
@@ -175,7 +167,7 @@ const ProductForm = () => {
               <InputNumber
                 id="precio_compra"
                 value={product.precio_compra}
-                onValueChange={(e) => setProduct({ ...product, precio_compra: e.value })}
+                onValueChange={(e) => setProduct({ ...product, precio_compra: Number(e.value) })}
                 mode="currency"
                 currency="USD"
                 className="w-full p-3 px-6 rounded-lg"
@@ -192,14 +184,13 @@ const ProductForm = () => {
               <InputNumber
                 id="precio_venta"
                 value={product.precio_venta}
-                onValueChange={(e) => setProduct({ ...product, precio_venta: e.value })}
+                onValueChange={(e) => setProduct({ ...product, precio_venta: Number(e.value) })}
                 mode="currency"
                 currency="USD"
                 className="w-full p-3 px-6 rounded-lg"
                 required
                 disabled={!!id}
               />
-              
             </div>
 
             {/* Stock Mínimo */}
@@ -210,7 +201,7 @@ const ProductForm = () => {
               <InputNumber
                 id="stock_minimo"
                 value={product.stock_minimo}
-                onValueChange={(e) => setProduct({ ...product, stock_minimo: e.value })}
+                onValueChange={(e) => setProduct({ ...product, stock_minimo: Number(e.value) })}
                 className="w-full p-3 px-6 rounded-lg"
                 required
               />
@@ -224,7 +215,7 @@ const ProductForm = () => {
               <InputNumber
                 id="stock_maximo"
                 value={product.stock_maximo}
-                onValueChange={(e) => setProduct({ ...product, stock_maximo: e.value })}
+                onValueChange={(e) => setProduct({ ...product, stock_maximo: Number(e.value) })}
                 className="w-full p-3 px-6 rounded-lg"
                 required
                 disabled={!!id}

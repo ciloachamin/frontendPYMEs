@@ -1,24 +1,30 @@
-// src/context/AlertsContext.tsx
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useState, useContext, useEffect } from 'react';
 import { getAlerts } from '../services/inventoryService';
+import { Inventory, ProductStock } from '../services/inventoryService'; // Importa las interfaces
 
-const AlertsContext = createContext({
+interface AlertsContextType {
+  alerts: ProductStock[];
+  fetchAlerts: () => void;
+}
+
+const AlertsContext = createContext<AlertsContextType>({
   alerts: [],
   fetchAlerts: () => {},
 });
 
 export const useAlerts = () => useContext(AlertsContext);
 
-export const AlertsProvider = ({ children }) => {
-  const [alerts, setAlerts] = useState([]);
+export const AlertsProvider = ({ children }: { children: React.ReactNode }) => {
+  const [alerts, setAlerts] = useState<ProductStock[]>([]);
 
   const fetchAlerts = async () => {
     try {
-      const data = await getAlerts(1); // Cambia el ID del inventario según tu lógica
+      const data: Inventory[] = await getAlerts(1);
+      const allProductsStock = data.flatMap((inventory) => inventory.productos_stock);
+
       setAlerts((prevAlerts) => {
-        // Solo actualiza si hay cambios en las alertas
-        if (JSON.stringify(prevAlerts) !== JSON.stringify(data.productos_stock)) {
-          return data.productos_stock;
+        if (JSON.stringify(prevAlerts) !== JSON.stringify(allProductsStock)) {
+          return allProductsStock;
         }
         return prevAlerts;
       });
@@ -26,11 +32,10 @@ export const AlertsProvider = ({ children }) => {
       console.error('Error al obtener alertas:', error);
     }
   };
-
   useEffect(() => {
-    fetchAlerts(); // Cargar alertas al inicio
-    const interval = setInterval(fetchAlerts, 60000); // Consultar cada 60 segundos
-    return () => clearInterval(interval); // Limpiar el intervalo al desmontar
+    fetchAlerts();
+    const interval = setInterval(fetchAlerts, 60000); 
+    return () => clearInterval(interval);
   }, []);
 
   return (

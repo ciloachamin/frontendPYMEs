@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { Calendar } from 'primereact/calendar';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
@@ -6,24 +6,54 @@ import { InputNumber } from 'primereact/inputnumber';
 import { Card } from 'primereact/card';
 import { Divider } from 'primereact/divider';
 import { createOrder, updateOrder, getOrderById } from '../../services/orderService';
-import { getCompanies } from '../../services/companyService';
-import { getProducts } from '../../services/productService';
+import { Company, getCompanies } from '../../services/companyService';
+import { getProducts, Product } from '../../services/productService';
 import { useNavigate, useParams } from 'react-router-dom';
+
+// Definir la interfaz para los detalles del pedido
+interface OrderDetail {
+  id_producto: number | null;
+  cantidad: number;
+  precio_unitario: number;
+}
+
+// Definir la interfaz para el pedido
+interface Order {
+  id_pedido?: number; // Hacer id_pedido opcional
+  empresa: Company; // Usar la interfaz Company completa
+  fecha_solicitud: string; // Hacer fecha_solicitud opcional
+  fecha_entrega: string;
+  estado: string;
+  detalles: OrderDetail[];
+  id_empresa: number | null;
+}
 
 const OrderForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [order, setOrder] = useState({
+  const [order, setOrder] = useState<Order>({
     id_empresa: null,
+    id_pedido: 1,
+    empresa: {
+      id_empresa: 1,
+      nombre: '', // Añadir propiedades obligatorias de Company
+      ruc: '',
+      direccion: '',
+      telefono: '',
+      email_contacto: '',
+      sector: '',
+      fecha_creacion: '',
+      estado: { type: 'Buffer', data: [1] }, // Ajustar según la estructura real
+    },
+    fecha_solicitud: '',
     fecha_entrega: '',
     estado: 'pendiente',
     detalles: [],
-    empresa:{id_empresa:null}
   });
 
-  const [companies, setCompanies] = useState([]);
-  const [products, setProducts] = useState([]);
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
 
   // Carga empresas y productos
   useEffect(() => {
@@ -39,7 +69,6 @@ const OrderForm = () => {
     const fetchProducts = async () => {
       try {
         const productsData = await getProducts({});
-        // Ajusta según la estructura de la respuesta
         setProducts(productsData.data || productsData);
       } catch (error) {
         console.error('Error al obtener los productos:', error);
@@ -67,7 +96,7 @@ const OrderForm = () => {
   };
 
   // Manejo de cambios en los detalles del pedido
-  const handleDetailChange = (index, field, value) => {
+  const handleDetailChange = (index: number, field: keyof OrderDetail, value: unknown) => {
     const nuevosDetalles = [...order.detalles];
     nuevosDetalles[index] = { ...nuevosDetalles[index], [field]: value };
     setOrder({ ...order, detalles: nuevosDetalles });
@@ -76,6 +105,8 @@ const OrderForm = () => {
   const addDetail = () => {
     setOrder({
       ...order,
+      fecha_entrega: '',
+      fecha_solicitud: 'dd',
       detalles: [
         ...order.detalles,
         { id_producto: null, cantidad: 0, precio_unitario: 0 },
@@ -83,12 +114,12 @@ const OrderForm = () => {
     });
   };
 
-  const removeDetail = (index) => {
+  const removeDetail = (index: number) => {
     const nuevosDetalles = order.detalles.filter((_, i) => i !== index);
     setOrder({ ...order, detalles: nuevosDetalles });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
       if (id) {
@@ -125,7 +156,9 @@ const OrderForm = () => {
                   label: company.nombre,
                   value: company.id_empresa,
                 }))}
-                onChange={(e) => setOrder({ ...order, id_empresa: e.value })}
+                onChange={(e) =>
+                  setOrder({ ...order, empresa: { ...order.empresa, id_empresa: e.value } })
+                }
                 filter
                 filterPlaceholder="Buscar empresa..."
                 placeholder="Selecciona una empresa"
@@ -142,7 +175,7 @@ const OrderForm = () => {
               <Calendar
                 value={order.fecha_entrega ? new Date(order.fecha_entrega) : null}
                 onChange={(e) => {
-                  const date = e.value;
+                  const date = e.value as Date | null;
                   setOrder({
                     ...order,
                     fecha_entrega: date ? date.toISOString() : '',
@@ -185,7 +218,7 @@ const OrderForm = () => {
                     Producto:
                   </label>
                   <Dropdown
-                    value={detalle.producto.id_producto}
+                    value={detalle.id_producto}
                     options={products.map((prod) => ({
                       label: prod.nombre,
                       value: prod.id_producto,

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import { getOrders, deleteOrder } from '../../services/orderService';
+import { getOrders, deleteOrder, Order } from '../../services/orderService';
 import { useNavigate } from 'react-router-dom';
 
 const OrderList = () => {
@@ -22,7 +22,7 @@ const OrderList = () => {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id:number) => {
     try {
       await deleteOrder(id);
       fetchOrders(); // Actualizar la lista después de eliminar
@@ -32,7 +32,7 @@ const OrderList = () => {
   };
 
   // Función para formatear la fecha y hora
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string | number | Date) => {
     if (!dateString) return '';
     const date = new Date(dateString);
     return date.toLocaleString('es-ES', {
@@ -46,16 +46,16 @@ const OrderList = () => {
   };
 
   // Templates para las columnas de fecha
-  const fechaSolicitudBodyTemplate = (rowData) => {
+  const fechaSolicitudBodyTemplate = (rowData : Order) => {
     return formatDate(rowData.fecha_solicitud);
   };
 
-  const fechaEntregaBodyTemplate = (rowData) => {
+  const fechaEntregaBodyTemplate = (rowData : Order) => {
     return formatDate(rowData.fecha_entrega);
   };
 
   // Template para la columna de acciones
-  const actionBodyTemplate = (rowData) => {
+  const actionBodyTemplate = (rowData: Order) => {
     return (
       <div className="flex gap-2">
         <Button
@@ -66,7 +66,7 @@ const OrderList = () => {
         <Button
           icon="pi pi-trash"
           className="p-button-rounded p-button-danger"
-          onClick={() => handleDelete(rowData.id_pedido)}
+          onClick={() => handleDelete(Number(rowData.id_pedido))}
         />
       </div>
     );

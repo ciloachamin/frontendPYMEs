@@ -1,11 +1,21 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Calendar } from 'primereact/calendar';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
 import { getFilteredMovements } from '../../services/movementService';
 
-const MovementFilter = ({ onFilter }) => {
-  const [filters, setFilters] = useState({
+interface Filters {
+  startDate: Date | null;
+  endDate: Date | null;
+  tipo_movimiento: string;
+}
+
+interface MovementFilterProps {
+  onFilter: (data: Filters) => void; 
+}
+
+const MovementFilter = ({ onFilter }: MovementFilterProps) => {
+  const [filters, setFilters] = useState<Filters>({
     startDate: null,
     endDate: null,
     tipo_movimiento: '',
@@ -21,8 +31,8 @@ const MovementFilter = ({ onFilter }) => {
       };
 
       const data = await getFilteredMovements(formattedFilters);
-      console.log("data",data);
-      
+      console.log("data", data);
+
       onFilter(data);
     } catch (error) {
       console.error('Error al filtrar movimientos:', error);
@@ -36,7 +46,7 @@ const MovementFilter = ({ onFilter }) => {
         <label>Fecha Inicio:</label>
         <Calendar
           value={filters.startDate}
-          onChange={(e) => setFilters({ ...filters, startDate: e.value })}
+          onChange={(e) => setFilters({ ...filters, startDate: e.value as Date | null })}
           dateFormat="yy-mm-dd" // Formato de fecha en el calendario
         />
       </div>
@@ -44,7 +54,7 @@ const MovementFilter = ({ onFilter }) => {
         <label>Fecha Fin:</label>
         <Calendar
           value={filters.endDate}
-          onChange={(e) => setFilters({ ...filters, endDate: e.value })}
+          onChange={(e) => setFilters({ ...filters, endDate: e.value as Date | null })}
           dateFormat="yy-mm-dd" // Formato de fecha en el calendario
         />
       </div>

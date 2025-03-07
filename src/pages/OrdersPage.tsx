@@ -1,7 +1,4 @@
-import React from 'react';
-import { TabView, TabPanel } from 'primereact/tabview';
 import OrderList from '../components/orders/OrderList';
-import OrderForm from '../components/orders/OrderForm';
 import { Button } from 'primereact/button';
 import { useNavigate } from 'react-router-dom';
 

@@ -1,30 +1,25 @@
-// src/services/productService.ts
-
 import api from './api';
-
-interface Product {
+export interface Product {
   id_producto?: number;
   codigo_barras: string;
   nombre: string;
   descripcion: string;
-  id_categoria: number;
-  precio_compra: number;
-  precio_venta: number;
-  stock_minimo: number;
-  stock_maximo: number;
+  id_categoria: number | null;
+  precio_compra: number | null;
+  precio_venta: number | null;
+  stock_minimo: number | null;
+  stock_maximo: number | null;
   stock_actual: number;
   id_empresa: number;
   id_proveedor: number;
 }
-
-
-interface ProductFilters {
-  categoriaId?: number;
-  empresaId?: number;
-  minPrecio?: number;
-  maxPrecio?: number;
-  limit?: number;
-  offset?: number;
+export interface ProductFilters {
+  categoriaId?: number | null;
+  empresaId?: number | null;
+  minPrecio?: number | null;
+  maxPrecio?: number | null;
+  limit?: number | null;
+  offset?: number | null;
 }
 
 export const getProducts = async (filters: ProductFilters) => {
@@ -32,7 +27,7 @@ export const getProducts = async (filters: ProductFilters) => {
     const response = await api.get('/productos', { params: filters });
     return response.data;
   } catch (error) {
-    throw new Error('Error al obtener los productos');
+    throw new Error(`Error al obtener los productos ${error}`);
   }
 };
 
@@ -41,48 +36,41 @@ export const getProductsNotFilter = async () => {
       const response = await api.get('/productos');
       return response.data;
     } catch (error) {
-      throw new Error('Error al obtener los productos');
+      throw new Error(`Error al obtener los productos ${error}`);
     }
   };
   
-
-
-// Obtener un producto por ID
 export const getProductById = async (id: number) => {
   try {
     const response = await api.get(`/productos/${id}`);
     return response.data;
   } catch (error) {
-    throw new Error('Error al obtener el producto');
+    throw new Error(`Error al obtener el producto ${error}`);
   }
 };
 
-// Crear un nuevo producto
 export const createProduct = async (product: Omit<Product, 'id_producto'>) => {
   try {
     const response = await api.post('/productos', product);
     return response.data;
   } catch (error) {
-    throw new Error('Error al crear el producto');
+    throw new Error(`Error al crear el producto ${error}`);
   }
 };
 
-// Actualizar un producto existente
 export const updateProduct = async (id: number, product: Partial<Product>) => {
   try {
     const response = await api.put(`/productos/${id}`, product);
     return response.data;
   } catch (error) {
-    throw new Error('Error al actualizar el producto');
+    throw new Error(`Error al actualizar el producto ${error}`);
   }
 };
-
-// Eliminar un producto
 export const deleteProduct = async (id: number) => {
   try {
     const response = await api.delete(`/productos/${id}`);
     return response.data;
   } catch (error) {
-    throw new Error('Error al eliminar el producto');
+    throw new Error(`Error al eliminar el producto ${error}`);
   }
 };

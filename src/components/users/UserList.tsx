@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import { getUsers, deleteUser } from '../../services/userService';
+import { getUsers, deleteUser, User } from '../../services/userService';
 import { useNavigate } from 'react-router-dom';
 
 const UserList = () => {
@@ -28,13 +28,19 @@ const UserList = () => {
     try {
       console.log('Eliminando usuario con id:', id);
       await deleteUser(id);
-      fetchUsers(); // Actualiza la lista después de eliminar
+      fetchUsers();
     } catch (error) {
       console.error(error);
     }
   };
 
-  const actionBodyTemplate = (rowData: any) => {
+  const roleBodyTemplate = (rowData: User) => {
+    return rowData.roles && rowData.roles[0] && rowData.roles[0].nombre
+      ? rowData.roles[0].nombre
+      : "No definido";
+  };
+
+  const actionBodyTemplate = (rowData: User) => {
     console.log("rowData", rowData);
 
     return (
@@ -47,7 +53,7 @@ const UserList = () => {
         <Button
           icon="pi pi-trash"
           className="p-button-rounded p-button-danger"
-          onClick={() => handleDelete(rowData.id_usuario)}
+          onClick={() => handleDelete(Number(rowData.id_usuario))}
         />
       </div>
     );
@@ -59,10 +65,7 @@ const UserList = () => {
         <Column field="nombre_completo" header="Nombre Completo" />
         <Column field="email" header="Email" />
         <Column field="empresa.nombre" header="Empresa" />
-        <Column
-          field={(row) => row.roles && row.roles[0] && row.roles[0].nombre ? row.roles[0].nombre : "No definido"}
-          header="Rol"
-        />
+        <Column body={roleBodyTemplate} header="Rol" /> {/* Usar body en lugar de field */}
         <Column field="telefono" header="Teléfono" />
         <Column body={actionBodyTemplate} header="Acciones" />
       </DataTable>

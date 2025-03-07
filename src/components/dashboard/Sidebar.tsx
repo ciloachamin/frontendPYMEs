@@ -1,9 +1,15 @@
-import React from 'react';
+
 import { Sidebar } from 'primereact/sidebar';
 import { Menu } from 'primereact/menu';
 import { useNavigate } from 'react-router-dom';
 
-const SidebarMenu = ({ visible, setVisible }) => {
+// Definir la interfaz para las props
+interface SidebarMenuProps {
+    visible: boolean; // `visible` es un booleano
+    setVisible: (visible: boolean) => void; // `setVisible` es una función que recibe un booleano
+  }
+  
+  const SidebarMenu = ({ visible, setVisible }: SidebarMenuProps) => {
     const navigate = useNavigate();
     
     const items = [
@@ -63,59 +69,6 @@ const SidebarMenu = ({ visible, setVisible }) => {
                 setVisible(false);
             }
         },
-        // {
-        //     label: 'Productos',
-        //     icon: 'pi pi-fw pi-shopping-cart',
-        //     items: [
-        //         {
-        //             label: 'Categorías',
-        //             icon: 'pi pi-fw pi-list',
-        //             command: () => {
-        //                 navigate('/productos/categorias');
-        //                 setVisible(false);
-        //             }
-        //         },
-        //         {
-        //             label: 'Nuevos',
-        //             icon: 'pi pi-fw pi-plus',
-        //             command: () => {
-        //                 navigate('/productos/nuevos');
-        //                 setVisible(false);
-        //             }
-        //         },
-        //         {
-        //             label: 'Ofertas',
-        //             icon: 'pi pi-fw pi-tag',
-        //             command: () => {
-        //                 navigate('/productos/ofertas');
-        //                 setVisible(false);
-        //             }
-        //         }
-        //     ]
-        // },
-
-        // {
-        //     label: 'Configuración',
-        //     icon: 'pi pi-fw pi-cog',
-        //     command: () => {
-        //         navigate('/configuracion');
-        //         setVisible(false);
-        //     }
-        // },
-        // {
-        //     separator: true
-        // },
-        // {
-        //     label: 'Cerrar Sesión',
-        //     icon: 'pi pi-fw pi-power-off',
-        //     command: () => {
-        //         // Aquí puedes agregar la lógica de cierre de sesión
-        //         console.log('Cerrando sesión');
-        //         // handleLogout();
-        //         navigate('/login');
-        //         setVisible(false);
-        //     }
-        // }
     ];
 
     return (

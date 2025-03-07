@@ -1,39 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { getAlerts } from '../../services/inventoryService';
-import { useParams } from 'react-router-dom';
+import { useAlerts } from "../../context/AlertsContext";
 
-const Alerts = () => {
-  const { inventoryId } = useParams();
-  const [alerts, setAlerts] = useState([]);
-
-  useEffect(() => {
-    const fetchAlerts = async () => {
-      try {
-        const data = await getAlerts(Number(inventoryId));
-        setAlerts(data.productos_stock);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchAlerts();
-  }, [inventoryId]);
-
-  console.log('alerts', alerts);
-  
+const AlertsComponent = () => {
+  const { alerts, fetchAlerts } = useAlerts();
 
   return (
     <div>
-      <h2>Alertas de Stock Bajo</h2>
+      <h2>Alertas de Stock</h2>
       <ul>
-        {alerts.map((product) => (
-          <li key={product.id_producto}>
-            {product.nombre} - Stock actual: {product.cantidad} (Mínimo: {product.stock_minimo})
+        {alerts.map((alert) => (
+          <li key={alert.id_producto}>
+            {alert.nombre} - Stock actual: {alert.stock_actual} (Mínimo: {alert.stock_minimo})
           </li>
         ))}
       </ul>
+      <button onClick={fetchAlerts}>Actualizar Alertas</button>
     </div>
   );
 };
 
-export default Alerts;
+export default AlertsComponent;

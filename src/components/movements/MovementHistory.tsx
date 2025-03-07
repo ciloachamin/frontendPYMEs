@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
@@ -7,16 +7,31 @@ import { Calendar } from 'primereact/calendar';
 import { Card } from 'primereact/card';
 import { getMovements, getFilteredMovements } from '../../services/movementService';
 
+// Definir la interfaz para los movimientos
+interface Movement {
+  id_movimiento: number;
+  producto: {
+    nombre: string;
+  };
+  tipo_movimiento: string;
+  cantidad: number;
+  fecha_movimiento: string;
+  motivo: string;
+  costo_unitario: number;
+  ubicacion: string;
+}
+
 const MovementHistory = () => {
-  const [movements, setMovements] = useState([]);
+  const [movements, setMovements] = useState<Movement[]>([]);
   const [filters, setFilters] = useState({
-    startDate: null,
-    endDate: null,
+    startDate: null as Date | null,
+    endDate: null as Date | null,
     tipo_movimiento: '',
   });
 
   useEffect(() => {
     fetchMovements();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
   const fetchMovements = async () => {
@@ -40,7 +55,7 @@ const MovementHistory = () => {
     }
   };
 
-  const handleFilterChange = (key, value) => {
+  const handleFilterChange = (key: string, value: unknown) => {
     setFilters({ ...filters, [key]: value });
   };
 
@@ -53,7 +68,7 @@ const MovementHistory = () => {
   };
 
   return (
-    <div className=" max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto">
       <Card className="shadow-sm border-0 mb-2">
         <div className="flex flex-col">
           <div className="flex justify-between items-center mb-6">

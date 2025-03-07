@@ -1,6 +1,6 @@
 import Navbar from './dashboard/Navbar';
 import SidebarMenu from './dashboard/Sidebar';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 
 const Layout = () => {

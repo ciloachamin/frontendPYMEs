@@ -26,7 +26,7 @@ const InventoryUpdate = () => {
           <label>Cantidad:</label>
           <InputNumber
             value={cantidad}
-            onValueChange={(e) => setCantidad(e.value)}
+            onValueChange={(e) => setCantidad(Number(e.value))}
             required
           />
         </div>

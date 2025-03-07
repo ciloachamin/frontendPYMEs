@@ -1,22 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
-import { getProducts, deleteProduct } from '../../services/productService';
+import { getProducts, deleteProduct, Product, ProductFilters } from '../../services/productService';
 import { useNavigate } from 'react-router-dom';
-import { getCategories } from '../../services/categoryService';
-import { getCompanies } from '../../services/companyService';
+import { Category, getCategories } from '../../services/categoryService';
+import { Company, getCompanies } from '../../services/companyService';
 import { Card } from 'primereact/card';
-import { Tooltip } from 'primereact/tooltip';
 import { InputNumber } from 'primereact/inputnumber';
 import { Tag } from 'primereact/tag';
 
+type Severity = "danger" | "success" | "info" | "warning" | "secondary" | "contrast" | null | undefined;
+
 const ProductList = () => {
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [companies, setCompanies] = useState([]);
-  const [filters, setFilters] = useState({
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [filters, setFilters] = useState<ProductFilters>({
     categoriaId: null,
     empresaId: null,
     minPrecio: null,
@@ -30,6 +31,7 @@ const ProductList = () => {
     fetchProducts();
     fetchCategories();
     fetchCompanies();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
   const fetchProducts = async () => {
@@ -59,7 +61,7 @@ const ProductList = () => {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: number) => {
     try {
       await deleteProduct(id);
       fetchProducts(); // Actualiza la lista después de eliminar
@@ -68,7 +70,7 @@ const ProductList = () => {
     }
   };
 
-  const handleFilterChange = (key, value) => {
+  const handleFilterChange = (key: keyof ProductFilters, value: unknown) => {
     setFilters({ ...filters, [key]: value });
   };
 
@@ -84,14 +86,14 @@ const ProductList = () => {
   };
 
   // Formatear el precio con el símbolo de moneda
-  const priceTemplate = (rowData) => {
-    return `$${parseFloat(rowData.precio_venta).toFixed(2)}`;
+  const priceTemplate = (rowData: Product) => {
+    return `$${parseFloat(Number(rowData.precio_venta).toString()).toFixed(2)}`;
   };
 
   // Plantilla para el estado del stock
-  const stockTemplate = (rowData) => {
+  const stockTemplate = (rowData: Product) => {
     const stock = rowData.stock_actual;
-    let severity = 'success';
+    let severity: Severity = 'success'; // Tipar como Severity
     
     if (stock <= 5) {
       severity = 'danger';
@@ -103,7 +105,7 @@ const ProductList = () => {
   };
 
   // Plantilla para las acciones
-  const actionBodyTemplate = (rowData) => {
+  const actionBodyTemplate = (rowData: Product) => {
     return (
       <div className="flex justify-center gap-2">
         <Button
@@ -114,7 +116,7 @@ const ProductList = () => {
         <Button
           icon="pi pi-trash"
           className="p-button-rounded p-button-text p-button-outlined p-button-danger"
-          onClick={() => handleDelete(rowData.id_producto)}
+          onClick={() => handleDelete(Number(rowData.id_producto))}
         />
       </div>
     );

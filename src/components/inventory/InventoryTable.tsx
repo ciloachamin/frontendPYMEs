@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputNumber } from 'primereact/inputnumber';
 import { Button } from 'primereact/button';
-import { getInventory, updateStock } from '../../services/inventoryService';
+import { getInventory, Inventory, updateStock } from '../../services/inventoryService';
 import { useParams } from 'react-router-dom';
 import { Toast } from 'primereact/toast';
 import { useRef } from 'react';
-import { useAlerts } from '../../context/AlertsContext'; // Importa el contexto
+import { useAlerts } from '../../context/AlertsContext';
 
 const InventoryTable = () => {
     const { inventoryId } = useParams();
-    const [inventory, setInventory] = useState(null);
+    const [inventory, setInventory] = useState<Inventory>();
     const [updatingStock, setUpdatingStock] = useState<{ [key: number]: number }>({});
     const toast = useRef<Toast>(null);
-    const { fetchAlerts } = useAlerts(); // Obtén fetchAlerts del contexto
+    const { fetchAlerts } = useAlerts();
 
     useEffect(() => {
         const fetchInventory = async () => {
@@ -28,18 +28,6 @@ const InventoryTable = () => {
 
         fetchInventory();
     }, [inventoryId]);
-
-
-    // Función para verificar alertas de stock bajo
-    const checkAlerts = (product) => {
-        if (product.cantidad <= product.stock_minimo) {
-            toast.current?.show({
-                severity: 'warn',
-                summary: 'Alerta de Stock Bajo',
-                detail: `${product.nombre} tiene un stock bajo: ${product.cantidad} (Mínimo: ${product.stock_minimo})`,
-            });
-        }
-    };
 
     const handleUpdateStock = async (productId: number) => {
         const cantidad = updatingStock[productId];
@@ -99,7 +87,7 @@ const InventoryTable = () => {
                             <InputNumber
                                 value={updatingStock[rowData.id_producto] || 0}
                                 onValueChange={(e) =>
-                                    setUpdatingStock({ ...updatingStock, [rowData.id_producto]: e.value })
+                                    setUpdatingStock({ ...updatingStock, [rowData.id_producto]: Number(e.value) })
                                 }
                                 mode="decimal"
                                 min={-1000} // Permite retirar stock con valores negativos

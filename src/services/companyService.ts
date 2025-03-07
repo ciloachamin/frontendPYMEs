@@ -15,12 +15,11 @@ export interface Company {
   };
 }
 
-// Obtener todas las empresas
 export const getCompanies = async (): Promise<Company[]> => {
   try {
     const response = await api.get('/empresas');
     return response.data;
   } catch (error) {
-    throw new Error('Error al obtener las empresas');
+    throw new Error(`Error al obtener las empresas ${error}`);
   }
 };

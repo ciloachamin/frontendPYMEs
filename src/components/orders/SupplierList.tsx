@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import { getSuppliers, deleteSupplier } from '../../services/supplierService';
+import { getSuppliers, deleteSupplier, Supplier } from '../../services/supplierService';
 import { useNavigate } from 'react-router-dom';
 
 const SupplierList = () => {
@@ -22,7 +22,7 @@ const SupplierList = () => {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id:number) => {
     try {
       await deleteSupplier(id);
       fetchSuppliers(); // Actualizar la lista después de eliminar
@@ -31,7 +31,7 @@ const SupplierList = () => {
     }
   };
 
-  const actionBodyTemplate = (rowData) => {
+  const actionBodyTemplate = (rowData:Supplier) => {
     return (
       <div className="flex gap-2">
         <Button
@@ -42,7 +42,7 @@ const SupplierList = () => {
         <Button
           icon="pi pi-trash"
           className="p-button-rounded p-button-danger"
-          onClick={() => handleDelete(rowData.id_proveedor)}
+          onClick={() => handleDelete(Number(rowData.id_proveedor))}
         />
       </div>
     );
